@@ -86,37 +86,104 @@ internal sealed class EmployeeRepository: IEmployeeRepository
         return employes;
     }
 
-    public async Task<bool> ChangedEmployeeById(EmployeeModel changeModel, int id)
+    public async Task<bool> ChangedEmployeeById(EmployeeModel changedModel, int id)
     {
         StringBuilder query = new StringBuilder("UPDATE Employees SET ");
 
-        if (changeModel.FirstName is not null) query.Append("FirstName = @firstName ");
-        if (changeModel.LastName is not null) query.Append(",LastName = @lastName ");
-        if (changeModel.Phone is not null) query.Append(",Phone = @phone ");
-        if (changeModel.CompanyId is not null) query.Append(",Phone = @phone ");
-        if (changeModel.Passport.Number is not null) query.Append(",PassportNumber  = @passportNumber ");
-        if (changeModel.Passport.Type is not null) query.Append(",PassportType  = @passportType ");
-        if (changeModel.Passport.Type is not null) query.Append(",PassportType  = @passportType ");
-        if (changeModel.Department.Name is not null) query.Append(",DepartmentName = @departmentName ");
-        if (changeModel.Department.Phone is not null) query.Append(",DepartmentPhone = @departmentPhone ");
+        StringBuilder querySetParameters = BuildParams(changedModel); // согласно пункту в тз обновляю только те колонки, для которые были переданы значения в запросе. вторым (пожалуй более удобным) решением было бы полное обновление объекта в таблице с перезаписью всех колонок (достаем объект по id, изменяем нужные свойства и обновляем существующий в таблице)
 
-        query.Append("WHERE Id = @Id");
+        query.Append(querySetParameters).Append("WHERE Id = @Id");
 
         var affectedRows = await _dbConnection.ExecuteAsync(query.ToString(),
             new
             {
                 Id = id,
-                changeModel.FirstName,
-                changeModel.LastName,
-                changeModel.Phone,
-                changeModel.CompanyId,
-                PassportType = changeModel.Passport?.Type,
-                PassportNumber = changeModel.Passport?.Number,
-                DepartmentName = changeModel.Department?.Name,
-                DepartmentPhone = changeModel.Department?.Phone
+                changedModel.FirstName,
+                changedModel.LastName,
+                changedModel.Phone,
+                changedModel.CompanyId,
+                PassportType = changedModel.Passport?.Type,
+                PassportNumber = changedModel.Passport?.Number,
+                DepartmentName = changedModel.Department?.Name,
+                DepartmentPhone = changedModel.Department?.Phone
             });
 
         return affectedRows == 1;
+    }
+
+    private StringBuilder BuildParams(EmployeeModel changedModel)
+    {
+        var query = new StringBuilder();
+
+        if (changedModel.FirstName is not null)
+        {
+            query.Append("FirstName = @firstName ");
+        }
+
+        if (changedModel.LastName is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("LastName = @lastName ");
+        }
+
+        if (changedModel.Phone is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("Phone = @phone ");
+        }
+
+        if (changedModel.CompanyId is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("CompanyId = @companyId ");
+        }
+
+        if (changedModel.Passport.Number is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("PassportNumber = @passportNumber ");
+        }
+
+        if (changedModel.Passport.Type is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("PassportType = @passportType ");
+        }
+
+        if (changedModel.Department.Name is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("DepartmentName = @departmentName ");
+        }
+
+        if (changedModel.Department.Phone is not null)
+        {
+            if (query.Length > 0)
+            {
+                query.Append(", ");
+            }
+            query.Append("DepartmentPhone = @departmentPhone ");
+        }
+
+        return query;
     }
 
     private Func<EmployeeModel, string, string, string, string, EmployeeModel> decomposeDepartmentAndPassport =

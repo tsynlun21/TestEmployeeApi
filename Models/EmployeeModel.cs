@@ -4,11 +4,9 @@ namespace TestEmployee.Models;
 
 public sealed class EmployeeModel
 {
-    //[Required]
-    [StringLength(20, ErrorMessage = "FirstName must be at least 3 characters long.", MinimumLength = 3)]
+    [StringLength(20, ErrorMessage = "FirstName must be at least 3 characters long.", MinimumLength = 1)]
     public string? FirstName { get; set; }
-    //[Required]
-    [StringLength(20, ErrorMessage = "LastName must be at least 3 characters long.", MinimumLength = 3)]
+    [StringLength(20, ErrorMessage = "LastName must be at least 3 characters long.", MinimumLength = 1)]
     public string? LastName { get; set; }
     public string? Phone { get; set; }
     public int? CompanyId { get; set; }

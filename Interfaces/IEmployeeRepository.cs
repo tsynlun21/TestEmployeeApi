@@ -8,6 +8,6 @@ public interface IEmployeeRepository
     internal Task<bool> Delete(int id);
     internal Task<List<EmployeeModel>> GetEmployesByCompany (string companyName);
     internal Task<List<EmployeeModel>> GetEmployesByDepartment(Department department);
-    internal Task<bool> ChangedEmployeeById(EmployeeModel changeModel, int id);
+    internal Task<bool> ChangedEmployeeById(EmployeeModel changedModel, int id);
 
 }

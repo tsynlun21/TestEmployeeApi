@@ -12,11 +12,6 @@ internal sealed class EmployeeService : IEmployeesService
         _repository = repository;
     }
 
-    public async Task<int> Add(EmployeeModel empModel)
-    {
-        return await _repository.Add(empModel);
-    }
-
     public async Task<int> AddEmployee(EmployeeModel empModel)
     {
         return await _repository.Add(empModel);
